@@ -1,0 +1,34 @@
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    tools:context="com.anikmohammad.tasktimerapp.MainActivity">
+    <item
+        android:id="@+id/mainmenu_add_task"
+        android:icon="@android:drawable/ic_menu_add"
+        android:orderInCategory="100"
+        android:title="@string/mainmenu_add_task"
+        app:showAsAction="ifRoom" />
+    <item
+        android:id="@+id/mainmenu_show_durations"
+        android:icon="@android:drawable/ic_menu_view"
+        android:orderInCategory="101"
+        android:title="@string/mainmenu_show_durations"
+        app:showAsAction="ifRoom" />
+    <item
+        android:id="@+id/mainmenu_settings"
+        android:orderInCategory="102"
+        android:title="@string/action_settings"
+        app:showAsAction="never" />
+    <item
+        android:id="@+id/mainmenu_about_app"
+        android:icon="@android:drawable/ic_menu_info_details"
+        android:orderInCategory="103"
+        android:title="@string/mainmenu_about_app"
+        app:showAsAction="ifRoom" />
+    <item
+        android:id="@+id/mainmenu_generate_data"
+        android:orderInCategory="104"
+        android:title="@string/mainmenu_generate_data"
+        android:visible="false"
+        app:showAsAction="never" />
+</menu>
