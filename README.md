@@ -1,1 +1,1 @@
-# task timer app from https://udemy.com//course/master-android-7-nougat-java-app-development-step-by-step
+# task timer app from <a href="https://udemy.com//course/master-android-7-nougat-java-app-development-step-by-step">Android Java Masterclass</a>
