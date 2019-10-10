@@ -13,6 +13,8 @@ import android.view.View;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
+import androidx.fragment.app.FragmentManager;
+import androidx.fragment.app.FragmentTransaction;
 
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.android.material.snackbar.Snackbar;
@@ -32,14 +34,11 @@ public class MainActivity extends AppCompatActivity implements CursorRecyclerVie
         Toolbar toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
 
-        FloatingActionButton fab = findViewById(R.id.fab);
-        fab.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                Snackbar.make(view, "Replace with your own action", Snackbar.LENGTH_LONG)
-                        .setAction("Action", null).show();
-            }
-        });
+        if(findViewById(R.id.task_detail_container) != null) {
+            // The detail container view will be present only in the large-screen layouts (res/values-land and res/values-sw600dp).
+            // If this view is present than the activity should be in two-pane mode.
+            mTwoPane = true;
+        }
     }
 
     @Override
@@ -75,6 +74,19 @@ public class MainActivity extends AppCompatActivity implements CursorRecyclerVie
         Log.d(TAG, "taskEditRequest: starts");
         if(mTwoPane) {
             Log.d(TAG, "taskEditRequest: in two-pane mode (tablet)");
+
+
+            AddEditActivityFragment fragment = new AddEditActivityFragment();
+
+            Bundle arguments = new Bundle();
+            arguments.putSerializable(Task.class.getSimpleName(), task);
+            fragment.setArguments(arguments);
+
+            FragmentManager fragmentManager = getSupportFragmentManager();
+            FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
+
+            fragmentTransaction.replace(R.id.task_detail_container, fragment);
+            fragmentTransaction.commit();
         } else {
             Log.d(TAG, "taskEditRequest: in single-pane mode (phone)");
             Intent detailIntent = new Intent(this, AddEditActivity.class);
