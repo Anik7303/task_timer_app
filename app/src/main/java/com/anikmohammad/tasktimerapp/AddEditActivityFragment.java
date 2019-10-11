@@ -1,7 +1,9 @@
 package com.anikmohammad.tasktimerapp;
 
+import android.app.Activity;
 import android.content.ContentResolver;
 import android.content.ContentValues;
+import android.content.Context;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -10,6 +12,7 @@ import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.EditText;
 
+import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
 
 /**
@@ -26,9 +29,34 @@ public class AddEditActivityFragment extends Fragment {
     private EditText mDescriptionEditText;
     private EditText mSortOrderEditText;
     private Button mSaveButton;
+    private OnSaveClicked mSaveListener = null;
+
+    interface OnSaveClicked {
+        void onSaveClicked();
+    }
 
     public AddEditActivityFragment() {
         Log.d(TAG, "AddEditActivityFragment: starts");
+    }
+
+    @Override
+    public void onAttach(@NonNull Context context) {
+        Log.d(TAG, "onAttach: starts");
+        super.onAttach(context);
+
+        // Activities containing this fragment must implement it's callbacks
+        Activity activity = getActivity();
+        if (!(activity instanceof OnSaveClicked)) {
+            throw new ClassCastException(activity.getClass().getSimpleName() + " must implement AddEditActivityFragment.OnSaveClick interface");
+        }
+        mSaveListener = (OnSaveClicked) activity;
+    }
+
+    @Override
+    public void onDetach() {
+        Log.d(TAG, "onDetach: starts");
+        super.onDetach();
+        mSaveListener = null;
     }
 
     @Override
@@ -103,6 +131,9 @@ public class AddEditActivityFragment extends Fragment {
 
                     default:
                         throw new IllegalArgumentException(TAG + "onClick() with unknow FragmentMode: " + mMode.toString());
+                }
+                if(mSaveListener != null) {
+                    mSaveListener.onSaveClicked();
                 }
             }
         });

@@ -5,6 +5,8 @@ import android.util.Log;
 
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
+import androidx.fragment.app.FragmentManager;
+import androidx.fragment.app.FragmentTransaction;
 
 public class AddEditActivity extends AppCompatActivity {
     private static final String TAG = "AddEditActivity";
@@ -16,6 +18,14 @@ public class AddEditActivity extends AppCompatActivity {
         setContentView(R.layout.activity_add_edit);
         Toolbar toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
+
+        Bundle arguments = getIntent().getExtras();
+        AddEditActivityFragment fragment = new AddEditActivityFragment();
+        fragment.setArguments(arguments);
+        FragmentManager fragmentManager = getSupportFragmentManager();
+        FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
+        fragmentTransaction.replace(R.id.fragment, fragment);
+        fragmentTransaction.commit();
 
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
     }
