@@ -20,6 +20,7 @@ public class TasksContract {
 
     /**
      * Get the uri for database query, insert, update or delete functionality
+     *
      * @param id the task id
      * @return returns the required uri
      */
@@ -29,6 +30,7 @@ public class TasksContract {
 
     /**
      * Extracts the id from the provided uri
+     *
      * @param uri the uri that contains the required id
      * @return returns the required id extracted form the provided uri
      */

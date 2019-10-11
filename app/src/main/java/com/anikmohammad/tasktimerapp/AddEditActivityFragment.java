@@ -21,7 +21,7 @@ import androidx.fragment.app.Fragment;
 public class AddEditActivityFragment extends Fragment {
     private static final String TAG = "AddEditActivityFragment";
 
-    enum FragmentMode { ADD, EDIT }
+    enum FragmentMode {ADD, EDIT}
 
     private FragmentMode mMode;
 
@@ -74,9 +74,9 @@ public class AddEditActivityFragment extends Fragment {
         Bundle arguments = getArguments();
 
         final Task task;
-        if(arguments != null) {
+        if (arguments != null) {
             task = (Task) arguments.getSerializable(Task.class.getSimpleName());
-            if(task != null) {
+            if (task != null) {
                 mNameEditText.setText(task.getName());
                 mDescriptionEditText.setText(task.getDescription());
                 mSortOrderEditText.setText(String.valueOf(task.getSortOrder()));
@@ -94,7 +94,7 @@ public class AddEditActivityFragment extends Fragment {
             public void onClick(View v) {
                 ContentResolver contentResolver = getActivity().getContentResolver();
                 int sortOrder;
-                if(mSortOrderEditText.getText().toString().length() > 0) {
+                if (mSortOrderEditText.getText().toString().length() > 0) {
                     sortOrder = Integer.parseInt(mSortOrderEditText.getText().toString());
                 } else {
                     sortOrder = 0;
@@ -102,9 +102,9 @@ public class AddEditActivityFragment extends Fragment {
 
                 ContentValues values = new ContentValues();
 
-                switch(mMode) {
+                switch (mMode) {
                     case ADD:
-                        if(mNameEditText.getText().toString().length() > 0) {
+                        if (mNameEditText.getText().toString().length() > 0) {
                             values.put(TasksContract.Columns.TASK_NAME, mNameEditText.getText().toString());
                             values.put(TasksContract.Columns.TASK_DESCRIPTION, mDescriptionEditText.getText().toString());
                             values.put(TasksContract.Columns.TASK_SORTORDER, sortOrder);
@@ -113,16 +113,16 @@ public class AddEditActivityFragment extends Fragment {
                         break;
 
                     case EDIT:
-                        if(!mNameEditText.getText().toString().equals(task.getName())) {
+                        if (!mNameEditText.getText().toString().equals(task.getName())) {
                             values.put(TasksContract.Columns.TASK_NAME, mNameEditText.getText().toString());
                         }
-                        if(!mDescriptionEditText.getText().toString().equals(task.getDescription())) {
+                        if (!mDescriptionEditText.getText().toString().equals(task.getDescription())) {
                             values.put(TasksContract.Columns.TASK_DESCRIPTION, mDescriptionEditText.getText().toString());
                         }
-                        if(sortOrder != task.getSortOrder()) {
+                        if (sortOrder != task.getSortOrder()) {
                             values.put(TasksContract.Columns.TASK_SORTORDER, sortOrder);
                         }
-                        if(values.size() > 0) {
+                        if (values.size() > 0) {
                             String selection = TasksContract.Columns._ID + " = ?";
                             String[] selectionArgs = {String.valueOf(task.getId())};
                             contentResolver.update(TasksContract.CONTENT_URI, values, selection, selectionArgs);
@@ -132,7 +132,7 @@ public class AddEditActivityFragment extends Fragment {
                     default:
                         throw new IllegalArgumentException(TAG + "onClick() with unknow FragmentMode: " + mMode.toString());
                 }
-                if(mSaveListener != null) {
+                if (mSaveListener != null) {
                     mSaveListener.onSaveClicked();
                 }
             }

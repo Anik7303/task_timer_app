@@ -18,6 +18,7 @@ class CursorRecyclerViewAdapter extends RecyclerView.Adapter<CursorRecyclerViewA
 
     interface OnTaskClickListener {
         void onEditButtonClick(Task task);
+
         void onDeleteButtonClick(Task task);
     }
 
@@ -37,8 +38,8 @@ class CursorRecyclerViewAdapter extends RecyclerView.Adapter<CursorRecyclerViewA
     @Override
     public void onBindViewHolder(@NonNull CursorRecyclerViewAdapter.TaskViewHolder holder, int position) {
         Log.d(TAG, "onBindViewHolder: called with position: " + position);
-        if(mCursor != null && mCursor.getCount() > 0) {
-            if(!mCursor.moveToPosition(position)) {
+        if (mCursor != null && mCursor.getCount() > 0) {
+            if (!mCursor.moveToPosition(position)) {
                 throw new IllegalArgumentException(TAG + " onBindViewHolder(): cannot move cursor to position: " + position);
             }
 
@@ -47,7 +48,7 @@ class CursorRecyclerViewAdapter extends RecyclerView.Adapter<CursorRecyclerViewA
                     mCursor.getString(mCursor.getColumnIndex(TasksContract.Columns.TASK_NAME)),
                     mCursor.getString(mCursor.getColumnIndex(TasksContract.Columns.TASK_DESCRIPTION)),
                     mCursor.getInt(mCursor.getColumnIndex(TasksContract.Columns.TASK_SORTORDER))
-                    );
+            );
 
             View.OnClickListener buttonListener = new View.OnClickListener() {
                 @Override
@@ -56,12 +57,12 @@ class CursorRecyclerViewAdapter extends RecyclerView.Adapter<CursorRecyclerViewA
 
                     switch (v.getId()) {
                         case R.id.tli_edit_button:
-                            if(mListener != null) {
+                            if (mListener != null) {
                                 mListener.onEditButtonClick(task);
                             }
                             break;
                         case R.id.tli_delete_button:
-                            if(mListener != null) {
+                            if (mListener != null) {
                                 mListener.onDeleteButtonClick(task);
                             }
                             break;
@@ -89,18 +90,19 @@ class CursorRecyclerViewAdapter extends RecyclerView.Adapter<CursorRecyclerViewA
 
     /**
      * Swap in a new {@link Cursor}, returning a new {@link Cursor}
+     *
      * @param newCursor the cursor to be used
      * @return returns the previously set cursor, if the swap is successful
      */
     public Cursor swapCursor(Cursor newCursor) {
-        if(newCursor == mCursor) {
+        if (newCursor == mCursor) {
             return null;
         }
 
         Cursor oldCursor = mCursor;
         mCursor = newCursor;
 
-        if(newCursor != null) {
+        if (newCursor != null) {
             // inform the observers of the new cursor
             notifyDataSetChanged();
         } else {

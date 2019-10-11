@@ -69,7 +69,7 @@ public class AppProvider extends ContentProvider {
 
         SQLiteQueryBuilder queryBuilder = new SQLiteQueryBuilder();
 
-        switch(match) {
+        switch (match) {
             case TASKS:
                 queryBuilder.setTables(TasksContract.TABLE_NAME);
                 break;
@@ -116,7 +116,7 @@ public class AppProvider extends ContentProvider {
         Log.d(TAG, "getType: starts with uri: " + uri);
         final int match = sUriMatcher.match(uri);
 
-        switch(match) {
+        switch (match) {
             case TASKS:
                 return TasksContract.CONTENT_TYPE;
 
@@ -149,11 +149,11 @@ public class AppProvider extends ContentProvider {
         long recordId;
         SQLiteDatabase db;
 
-        switch(match) {
+        switch (match) {
             case TASKS:
                 db = mOpenHelper.getWritableDatabase();
                 recordId = db.insert(TasksContract.TABLE_NAME, null, values);
-                if(recordId >= 0) {
+                if (recordId >= 0) {
                     Log.d(TAG, "insert: recordId: " + recordId);
                     getContext().getContentResolver().notifyChange(uri, null);
                     return TasksContract.buildUri(recordId);
@@ -198,7 +198,7 @@ public class AppProvider extends ContentProvider {
         String selectionCriteria;
         SQLiteDatabase db;
 
-        switch(match) {
+        switch (match) {
             case TASKS:
                 db = mOpenHelper.getWritableDatabase();
                 count = db.delete(TasksContract.TABLE_NAME, selection, selectionArgs);
@@ -208,7 +208,7 @@ public class AppProvider extends ContentProvider {
                 db = mOpenHelper.getWritableDatabase();
                 long taskId = TasksContract.getId(uri);
                 selectionCriteria = TasksContract.Columns._ID + " = " + taskId;
-                if(selection != null && selection.length() > 0) {
+                if (selection != null && selection.length() > 0) {
                     selectionCriteria = selectionCriteria + "AND (" + selection + ")";
                 }
                 count = db.delete(TasksContract.TABLE_NAME, selectionCriteria, selectionArgs);
@@ -249,7 +249,7 @@ public class AppProvider extends ContentProvider {
         }
 
         Log.d(TAG, "update: count: " + count);
-        if(count > 0) {
+        if (count > 0) {
             getContext().getContentResolver().notifyChange(uri, null);
             return count;
         } else {
@@ -266,7 +266,7 @@ public class AppProvider extends ContentProvider {
         String selectionCriteria;
         SQLiteDatabase db;
 
-        switch(match) {
+        switch (match) {
             case TASKS:
                 db = mOpenHelper.getWritableDatabase();
                 count = db.update(TasksContract.TABLE_NAME, values, selection, selectionArgs);
@@ -276,7 +276,7 @@ public class AppProvider extends ContentProvider {
                 db = mOpenHelper.getWritableDatabase();
                 long taskId = TasksContract.getId(uri);
                 selectionCriteria = TasksContract.Columns._ID + " = " + taskId;
-                if(selection != null && selection.length() > 0) {
+                if (selection != null && selection.length() > 0) {
                     selectionCriteria = selectionCriteria + " AND (" + selection + ")";
                 }
                 count = db.update(TasksContract.TABLE_NAME, values, selectionCriteria, selectionArgs);
@@ -317,7 +317,7 @@ public class AppProvider extends ContentProvider {
         }
 
         Log.d(TAG, "update: count: " + count);
-        if(count > 0) {
+        if (count > 0) {
             getContext().getContentResolver().notifyChange(uri, null);
             return count;
         } else {

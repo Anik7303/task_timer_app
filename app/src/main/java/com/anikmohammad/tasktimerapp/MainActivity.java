@@ -1,25 +1,18 @@
 package com.anikmohammad.tasktimerapp;
 
-import android.content.ContentResolver;
-import android.content.ContentValues;
 import android.content.Intent;
-import android.database.Cursor;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
-import android.view.View;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
+import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
-import androidx.fragment.app.FragmentTransaction;
 
-import com.google.android.material.floatingactionbutton.FloatingActionButton;
-import com.google.android.material.snackbar.Snackbar;
-
-public class MainActivity extends AppCompatActivity implements CursorRecyclerViewAdapter.OnTaskClickListener {
+public class MainActivity extends AppCompatActivity implements CursorRecyclerViewAdapter.OnTaskClickListener, AddEditActivityFragment.OnSaveClicked {
     private static final String TAG = "MainActivity";
 
     // Whether or not the activity is in two pane mode
@@ -34,7 +27,7 @@ public class MainActivity extends AppCompatActivity implements CursorRecyclerVie
         Toolbar toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
 
-        if(findViewById(R.id.task_detail_container) != null) {
+        if (findViewById(R.id.task_detail_container) != null) {
             // The detail container view will be present only in the large-screen layouts (res/values-land and res/values-sw600dp).
             // If this view is present than the activity should be in two-pane mode.
             mTwoPane = true;
@@ -51,7 +44,7 @@ public class MainActivity extends AppCompatActivity implements CursorRecyclerVie
     @Override
     public boolean onOptionsItemSelected(@NonNull MenuItem item) {
 
-        switch(item.getItemId()) {
+        switch (item.getItemId()) {
             case R.id.mainmenu_add_task:
                 taskEditRequest(null);
                 break;
@@ -72,7 +65,7 @@ public class MainActivity extends AppCompatActivity implements CursorRecyclerVie
 
     private void taskEditRequest(Task task) {
         Log.d(TAG, "taskEditRequest: starts");
-        if(mTwoPane) {
+        if (mTwoPane) {
             Log.d(TAG, "taskEditRequest: in two-pane mode (tablet)");
 
 
@@ -82,15 +75,13 @@ public class MainActivity extends AppCompatActivity implements CursorRecyclerVie
             arguments.putSerializable(Task.class.getSimpleName(), task);
             fragment.setArguments(arguments);
 
-            FragmentManager fragmentManager = getSupportFragmentManager();
-            FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
-
-            fragmentTransaction.replace(R.id.task_detail_container, fragment);
-            fragmentTransaction.commit();
+            getSupportFragmentManager().beginTransaction()
+                    .replace(R.id.task_detail_container, fragment)
+                    .commit();
         } else {
             Log.d(TAG, "taskEditRequest: in single-pane mode (phone)");
             Intent detailIntent = new Intent(this, AddEditActivity.class);
-            if(task != null) {
+            if (task != null) {
                 detailIntent.putExtra(Task.class.getSimpleName(), task);
             }
             startActivity(detailIntent);
@@ -111,5 +102,17 @@ public class MainActivity extends AppCompatActivity implements CursorRecyclerVie
                 selection,
                 selectionArgs
         );
+    }
+
+    @Override
+    public void onSaveClicked() {
+        Log.d(TAG, "onSaveClicked: starts");
+        FragmentManager fragmentManager = getSupportFragmentManager();
+        Fragment fragment = fragmentManager.findFragmentById(R.id.task_detail_container);
+        if (fragment != null) {
+            fragmentManager.beginTransaction()
+                    .remove(fragment)
+                    .commit();
+        }
     }
 }

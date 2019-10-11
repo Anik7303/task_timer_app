@@ -21,12 +21,13 @@ class AppDatabase extends SQLiteOpenHelper {
 
     /**
      * Returns a singleton {@link SQLiteOpenHelper} object
+     *
      * @param context Apps Context
      * @return {@link SQLiteOpenHelper} Object
      */
     public static AppDatabase getInstance(Context context) {
         Log.d(TAG, "getInstance: getting instance");
-        if(mInstance == null) {
+        if (mInstance == null) {
             Log.d(TAG, "getInstance: creating new instance");
             mInstance = new AppDatabase(context);
         }
@@ -52,7 +53,7 @@ class AppDatabase extends SQLiteOpenHelper {
     @Override
     public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
         // TODO complete this function
-        switch(oldVersion) {
+        switch (oldVersion) {
             case 1:
                 // logic from database version 1
                 break;
