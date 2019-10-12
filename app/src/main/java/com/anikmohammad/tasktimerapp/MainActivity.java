@@ -12,11 +12,13 @@ import androidx.appcompat.widget.Toolbar;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
 
-public class MainActivity extends AppCompatActivity implements CursorRecyclerViewAdapter.OnTaskClickListener, AddEditActivityFragment.OnSaveClicked {
+public class MainActivity extends AppCompatActivity implements CursorRecyclerViewAdapter.OnTaskClickListener, AddEditActivityFragment.OnSaveClicked, AppDialog.DialogEvents {
     private static final String TAG = "MainActivity";
 
     // Whether or not the activity is in two pane mode
     private boolean mTwoPane = false;
+
+    private static final int DIALOG_ID = 1;
 
     private static final String ADD_EDIT_FRAGMENT = "AddEditFragment";
 
@@ -95,13 +97,15 @@ public class MainActivity extends AppCompatActivity implements CursorRecyclerVie
 
     @Override
     public void onDeleteButtonClick(Task task) {
-        String selection = TasksContract.Columns._ID + " = ?";
-        String[] selectionArgs = {String.valueOf(task.getId())};
-        getContentResolver().delete(
-                TasksContract.CONTENT_URI,
-                selection,
-                selectionArgs
-        );
+        AppDialog dialog = new AppDialog();
+        Bundle args = new Bundle();
+        args.putInt(AppDialog.DIALOG_ID, DIALOG_ID);
+        args.putString(AppDialog.DIALOG_TITLE, "");
+        args.putString(AppDialog.DIALOG_MESSAGE, getString(R.string.deldiag_message, task.getId(), task.getName()));
+        args.putInt(AppDialog.DIALOG_POSITIVE_RID, R.string.deldiag_positive_caption);
+        args.putLong(TasksContract.Columns._ID, task.getId());
+        dialog.setArguments(args);
+        dialog.show(getSupportFragmentManager(), null);
     }
 
     @Override
@@ -114,5 +118,32 @@ public class MainActivity extends AppCompatActivity implements CursorRecyclerVie
                     .remove(fragment)
                     .commit();
         }
+    }
+
+    @Override
+    public void onPositiveDialogResult(int dialogId, Bundle args) {
+        Log.d(TAG, "onPositiveDialogResult: called");
+        if(dialogId == DIALOG_ID) {
+            final long taskId = args.getLong(TasksContract.Columns._ID);
+            if(BuildConfig.DEBUG && taskId == 0) throw new AssertionError("Task Id is zero");
+
+            String selection = TasksContract.Columns._ID + " = ?";
+            String[] selectionArgs = {String.valueOf(taskId)};
+            getContentResolver().delete(
+                    TasksContract.CONTENT_URI,
+                    selection,
+                    selectionArgs
+            );
+        }
+    }
+
+    @Override
+    public void onNegativeDialogResult(int dialogId, Bundle args) {
+        Log.d(TAG, "onNegativeDialogResult: called");
+    }
+
+    @Override
+    public void onDialogCancelled(int dialogId) {
+        Log.d(TAG, "onDialogCancelled: called");
     }
 }
