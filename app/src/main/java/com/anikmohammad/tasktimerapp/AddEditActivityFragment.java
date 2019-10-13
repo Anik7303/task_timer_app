@@ -25,10 +25,6 @@ public class AddEditActivityFragment extends Fragment {
 
     private FragmentMode mMode;
 
-    private EditText mNameEditText;
-    private EditText mDescriptionEditText;
-    private EditText mSortOrderEditText;
-    private Button mSaveButton;
     private OnSaveClicked mSaveListener = null;
 
     interface OnSaveClicked {
@@ -65,10 +61,10 @@ public class AddEditActivityFragment extends Fragment {
         Log.d(TAG, "onCreateView: starts");
         View view = inflater.inflate(R.layout.fragment_add_edit, container, false);
 
-        mNameEditText = view.findViewById(R.id.addedit_name);
-        mDescriptionEditText = view.findViewById(R.id.addedit_description);
-        mSortOrderEditText = view.findViewById(R.id.addedit_sortorder);
-        mSaveButton = view.findViewById(R.id.addedit_save);
+        final EditText mNameEditText = view.findViewById(R.id.addedit_name);
+        final EditText mDescriptionEditText = view.findViewById(R.id.addedit_description);
+        final EditText mSortOrderEditText = view.findViewById(R.id.addedit_sortorder);
+        final Button mSaveButton = view.findViewById(R.id.addedit_save);
 
 //        Bundle arguments = getActivity().getIntent().getExtras(); // This is the wrong way of doing this
         Bundle arguments = getArguments();
@@ -140,5 +136,9 @@ public class AddEditActivityFragment extends Fragment {
 
         Log.d(TAG, "onCreateView: ends");
         return view;
+    }
+
+    public boolean canClose() {
+        return false;// TODO finish this method
     }
 }

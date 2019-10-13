@@ -19,11 +19,11 @@ public class AppDialog extends DialogFragment {
 
     private DialogEvents mDialogListener = null;
 
-    public static final String DIALOG_ID = "id";
-    public static final String DIALOG_TITLE = "title";
-    public static final String DIALOG_MESSAGE = "message";
-    public static final String DIALOG_POSITIVE_RID = "positive_rid";
-    public static final String DIALOG_NEGATIVE_RID = "negative_rid";
+    static final String DIALOG_ID = "id";
+    static final String DIALOG_TITLE = "title";
+    static final String DIALOG_MESSAGE = "message";
+    static final String DIALOG_POSITIVE_RID = "positive_rid";
+    static final String DIALOG_NEGATIVE_RID = "negative_rid";
 
     /**
      * The dialogue's callback interface to notify of user selected results (deletion confirmed, etc.).
@@ -117,11 +117,5 @@ public class AppDialog extends DialogFragment {
             int dialogId = getArguments().getInt(DIALOG_ID);
             mDialogListener.onDialogCancelled(dialogId);
         }
-    }
-
-    @Override
-    public void onDismiss(@NonNull DialogInterface dialog) {
-        Log.d(TAG, "onDismiss: starts");
-        super.onDismiss(dialog);
     }
 }
