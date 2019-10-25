@@ -2,13 +2,18 @@ package com.anikmohammad.tasktimerapp;
 
 import android.os.Bundle;
 import android.util.Log;
+import android.view.MenuItem;
 
+import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
+import androidx.fragment.app.FragmentManager;
 
 public class AddEditActivity extends AppCompatActivity implements AddEditActivityFragment.OnSaveClicked, AppDialog.DialogEvents {
     private static final String TAG = "AddEditActivity";
     private static final int DIALOG_ID_CANCEL_EDIT = 1;
+
+    private FragmentManager fragmentManager = getSupportFragmentManager();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -22,11 +27,29 @@ public class AddEditActivity extends AppCompatActivity implements AddEditActivit
         AddEditActivityFragment fragment = new AddEditActivityFragment();
         fragment.setArguments(arguments);
 
-        getSupportFragmentManager().beginTransaction()
+        fragmentManager.beginTransaction()
                 .replace(R.id.fragment, fragment)
                 .commit();
 
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(@NonNull MenuItem item) {
+        switch(item.getItemId()) {
+            case android.R.id.home:
+                Log.d(TAG, "onOptionsItemSelected: home button pressed");
+                AddEditActivityFragment fragment = (AddEditActivityFragment) fragmentManager.findFragmentById(R.id.fragment);
+                if(fragment.canClose()) {
+                    return super.onOptionsItemSelected(item);
+                } else {
+                    showQuitConfirmationDialog();
+                    return true; // indicates we are handling this
+                }
+
+            default:
+                return super.onOptionsItemSelected(item);
+        }
     }
 
     @Override
@@ -52,22 +75,24 @@ public class AddEditActivity extends AppCompatActivity implements AddEditActivit
 
     @Override
     public void onBackPressed() {
-        AddEditActivityFragment fragment = (AddEditActivityFragment) getSupportFragmentManager().findFragmentById(R.id.fragment);
+        AddEditActivityFragment fragment = (AddEditActivityFragment) fragmentManager.findFragmentById(R.id.fragment);
         if(fragment.canClose()) {
             super.onBackPressed();
         } else {
-            // show dialogue to get confirmation to quit editing
-            AppDialog dialog = new AppDialog();
-
-            Bundle args = new Bundle();
-            args.putInt(AppDialog.DIALOG_ID, DIALOG_ID_CANCEL_EDIT);
-            args.putString(AppDialog.DIALOG_TITLE, "Cancel Editing?");
-            args.putString(AppDialog.DIALOG_MESSAGE, getString(R.string.cancelEditDiag_message));
-            args.putInt(AppDialog.DIALOG_POSITIVE_RID, R.string.cancelEditDiag_positive_caption);
-            args.putInt(AppDialog.DIALOG_NEGATIVE_RID, R.string.cancelEditDiag_negative_caption);
-
-            dialog.setArguments(args);
-            dialog.show(getSupportFragmentManager(), null);
+            showQuitConfirmationDialog();
         }
+    }
+
+    private void showQuitConfirmationDialog() {
+        // show dialogue to get confirmation to quit editing
+        Bundle args = new Bundle();
+        args.putInt(AppDialog.DIALOG_ID, DIALOG_ID_CANCEL_EDIT);
+        args.putString(AppDialog.DIALOG_MESSAGE, getString(R.string.cancelEditDiag_message));
+        args.putInt(AppDialog.DIALOG_POSITIVE_RID, R.string.cancelEditDiag_positive_caption);
+        args.putInt(AppDialog.DIALOG_NEGATIVE_RID, R.string.cancelEditDiag_negative_caption);
+
+        AppDialog dialog = new AppDialog();
+        dialog.setArguments(args);
+        dialog.show(fragmentManager, null);
     }
 }
