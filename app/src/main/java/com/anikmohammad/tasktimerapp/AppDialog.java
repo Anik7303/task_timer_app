@@ -67,9 +67,9 @@ public class AppDialog extends DialogFragment {
         int negativeStringId;
 
         if(arguments != null) {
-            dialogId = arguments.getInt(DIALOG_ID);
-            messageTitle = arguments.getString(DIALOG_TITLE, "");
-            messageString = arguments.getString(DIALOG_MESSAGE);
+            dialogId = arguments.getInt(DIALOG_ID, 0);
+            messageTitle = arguments.getString(DIALOG_TITLE, null);
+            messageString = arguments.getString(DIALOG_MESSAGE, null);
 
             if(dialogId == 0 || messageString == null) {
                 throw new IllegalArgumentException("DIALOG_ID and/or DIALOG_MESSAGE is not present in the bundle");
