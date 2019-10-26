@@ -2,6 +2,7 @@ package com.anikmohammad.tasktimerapp;
 
 import android.annotation.SuppressLint;
 import android.app.AlertDialog;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
@@ -84,7 +85,15 @@ public class MainActivity extends AppCompatActivity implements CursorRecyclerVie
         View messageView = getLayoutInflater().inflate(R.layout.content_about, null, false);
         AlertDialog.Builder builder = new AlertDialog.Builder(this).setView(messageView)
                 .setTitle(R.string.app_name)
-                .setIcon(R.mipmap.ic_launcher);
+                .setIcon(R.mipmap.ic_launcher)
+                .setPositiveButton(R.string.about_close_caption, new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        if(mDialog != null && mDialog.isShowing()) {
+                            mDialog.dismiss();
+                        }
+                    }
+                });
 
         mDialog = builder.create();
         mDialog.setCanceledOnTouchOutside(true);
