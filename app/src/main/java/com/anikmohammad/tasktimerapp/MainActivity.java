@@ -1,10 +1,14 @@
 package com.anikmohammad.tasktimerapp;
 
+import android.annotation.SuppressLint;
+import android.app.AlertDialog;
 import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.View;
+import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
@@ -20,6 +24,9 @@ public class MainActivity extends AppCompatActivity implements CursorRecyclerVie
 
     private static final int DIALOG_ID_DELETE_TASK = 1;
     private static final int DIALOG_ID_CANCEL_EDIT = 2;
+
+    private AlertDialog mDialog = null; // module scope because we need to dismiss it in onStop
+                                        // e.g. when orientation changes to avoid memory leaks
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -45,24 +52,47 @@ public class MainActivity extends AppCompatActivity implements CursorRecyclerVie
 
     @Override
     public boolean onOptionsItemSelected(@NonNull MenuItem item) {
-
         switch (item.getItemId()) {
             case R.id.mainmenu_add_task:
+                // create new task
                 taskEditRequest(null);
                 break;
             case R.id.mainmenu_show_durations:
+                // show task run durations
                 break;
             case R.id.mainmenu_settings:
+                // go into the apps settings
                 break;
             case R.id.mainmenu_about_app:
+                // display the app's about dialog
+                showAboutDialog();
                 break;
             case R.id.mainmenu_generate_data:
+                // this is a functionality only available in debug mode.
+                // it generates some dummy test data.
                 break;
             default:
                 return super.onOptionsItemSelected(item);
         }
 
         return true;
+    }
+
+    @SuppressLint("SetTextI18n")
+    public void showAboutDialog() {
+        @SuppressWarnings("InflateParams")
+        View messageView = getLayoutInflater().inflate(R.layout.content_about, null, false);
+        AlertDialog.Builder builder = new AlertDialog.Builder(this).setView(messageView)
+                .setTitle(R.string.app_name)
+                .setIcon(R.mipmap.ic_launcher);
+
+        mDialog = builder.create();
+        mDialog.setCanceledOnTouchOutside(true);
+
+        TextView tv = messageView.findViewById(R.id.about_version);
+        tv.setText("v" + BuildConfig.VERSION_NAME);
+
+        mDialog.show();
     }
 
     private void taskEditRequest(Task task) {
@@ -189,6 +219,14 @@ public class MainActivity extends AppCompatActivity implements CursorRecyclerVie
             args.putInt(AppDialog.DIALOG_NEGATIVE_RID, R.string.cancelEditDiag_negative_caption);
             dialog.setArguments(args);
             dialog.show(getSupportFragmentManager(), null);
+        }
+    }
+
+    @Override
+    protected void onStop() {
+        super.onStop();
+        if(mDialog != null && mDialog.isShowing()) {
+            mDialog.dismiss();
         }
     }
 }
