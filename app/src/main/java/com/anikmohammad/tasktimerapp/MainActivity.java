@@ -154,7 +154,11 @@ public class MainActivity extends AppCompatActivity implements CursorRecyclerVie
 
             case DIALOG_ID_CANCEL_EDIT:
                 // close the app without saving the edited data
-                finish();
+//                finish();
+                AddEditActivityFragment fragment = (AddEditActivityFragment) getSupportFragmentManager().findFragmentById(R.id.task_detail_container);
+                if(fragment != null) {
+                    getSupportFragmentManager().beginTransaction().remove(fragment).commit();
+                }
                 break;
 
             default:
