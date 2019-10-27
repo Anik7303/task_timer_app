@@ -1,6 +1,5 @@
 package com.anikmohammad.tasktimerapp;
 
-
 import android.app.Dialog;
 import android.content.Context;
 import android.content.DialogInterface;
@@ -88,6 +87,7 @@ public class AppDialog extends DialogFragment {
             throw new IllegalArgumentException("Must pass DIALOG_ID and DIALOG_MESSAGE in the bundle");
         }
 
+        @SuppressWarnings("ConstantConditions")
         AlertDialog.Builder builder = new AlertDialog.Builder(getActivity()).setTitle(messageTitle)
                 .setMessage(messageString)
                 .setPositiveButton(positiveStringId, new DialogInterface.OnClickListener() {
@@ -115,8 +115,11 @@ public class AppDialog extends DialogFragment {
     public void onCancel(@NonNull DialogInterface dialog) {
         Log.d(TAG, "onCancel: starts");
         if(mDialogListener != null) {
-            int dialogId = getArguments().getInt(DIALOG_ID);
-            mDialogListener.onDialogCancelled(dialogId);
+            Bundle arguments = getArguments();
+            if(arguments != null) {
+                int dialogId = arguments.getInt(DIALOG_ID);
+                mDialogListener.onDialogCancelled(dialogId);
+            }
         }
     }
 }

@@ -5,6 +5,7 @@ import android.util.Log;
 import android.view.MenuItem;
 
 import androidx.annotation.NonNull;
+import androidx.appcompat.app.ActionBar;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
 import androidx.fragment.app.FragmentManager;
@@ -31,16 +32,20 @@ public class AddEditActivity extends AppCompatActivity implements AddEditActivit
                 .replace(R.id.fragment, fragment)
                 .commit();
 
-        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+        ActionBar actionBar = getSupportActionBar();
+        if(actionBar != null) {
+            actionBar.setDisplayHomeAsUpEnabled(true);
+        }
     }
 
     @Override
     public boolean onOptionsItemSelected(@NonNull MenuItem item) {
+        //noinspection SwitchStatementWithTooFewBranches
         switch(item.getItemId()) {
             case android.R.id.home:
                 Log.d(TAG, "onOptionsItemSelected: home button pressed");
                 AddEditActivityFragment fragment = (AddEditActivityFragment) fragmentManager.findFragmentById(R.id.fragment);
-                if(fragment.canClose()) {
+                if(fragment != null && fragment.canClose()) {
                     return super.onOptionsItemSelected(item);
                 } else {
                     showQuitConfirmationDialog();
@@ -76,7 +81,7 @@ public class AddEditActivity extends AppCompatActivity implements AddEditActivit
     @Override
     public void onBackPressed() {
         AddEditActivityFragment fragment = (AddEditActivityFragment) fragmentManager.findFragmentById(R.id.fragment);
-        if(fragment.canClose()) {
+        if(fragment != null && fragment.canClose()) {
             super.onBackPressed();
         } else {
             showQuitConfirmationDialog();

@@ -5,12 +5,12 @@ import java.io.Serializable;
 class Task implements Serializable {
     public static final long serialVersionUID = 20190917L;
 
-    public long mId;
-    public final String mName;
-    public final String mDescription;
-    public final int mSortOrder;
+    private long mId;
+    private final String mName;
+    private final String mDescription;
+    private final int mSortOrder;
 
-    public Task(long id, String name, String description, int sortOrder) {
+    Task(long id, String name, String description, int sortOrder) {
         this.mId = id;
         this.mName = name;
         this.mDescription = description;
@@ -25,11 +25,11 @@ class Task implements Serializable {
         return mName;
     }
 
-    public String getDescription() {
+    String getDescription() {
         return mDescription;
     }
 
-    public int getSortOrder() {
+    int getSortOrder() {
         return mSortOrder;
     }
 
@@ -37,6 +37,7 @@ class Task implements Serializable {
         this.mId = id;
     }
 
+    @SuppressWarnings("NullableProblems")
     @Override
     public String toString() {
         return "Task{" +

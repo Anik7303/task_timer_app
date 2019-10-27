@@ -42,7 +42,7 @@ public class AddEditActivityFragment extends Fragment {
 
         // Activities containing this fragment must implement it's callbacks
         Activity activity = getActivity();
-        if (!(activity instanceof OnSaveClicked)) {
+        if (activity != null && !(activity instanceof OnSaveClicked)) {
             throw new ClassCastException(activity.getClass().getSimpleName() + " must implement AddEditActivityFragment.OnSaveClick interface");
         }
         mSaveListener = (OnSaveClicked) activity;
@@ -88,48 +88,52 @@ public class AddEditActivityFragment extends Fragment {
         mSaveButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                ContentResolver contentResolver = getActivity().getContentResolver();
-                int sortOrder;
-                if (mSortOrderEditText.getText().toString().length() > 0) {
-                    sortOrder = Integer.parseInt(mSortOrderEditText.getText().toString());
-                } else {
-                    sortOrder = 0;
-                }
+                Activity activity = getActivity();
+                if(activity != null) {
+                    ContentResolver contentResolver = getActivity().getContentResolver();
+                    int sortOrder;
+                    if (mSortOrderEditText.getText().toString().length() > 0) {
+                        sortOrder = Integer.parseInt(mSortOrderEditText.getText().toString());
+                    } else {
+                        sortOrder = 0;
+                    }
 
-                ContentValues values = new ContentValues();
+                    ContentValues values = new ContentValues();
 
-                switch (mMode) {
-                    case ADD:
-                        if (mNameEditText.getText().toString().length() > 0) {
-                            values.put(TasksContract.Columns.TASK_NAME, mNameEditText.getText().toString());
-                            values.put(TasksContract.Columns.TASK_DESCRIPTION, mDescriptionEditText.getText().toString());
-                            values.put(TasksContract.Columns.TASK_SORTORDER, sortOrder);
-                            contentResolver.insert(TasksContract.CONTENT_URI, values);
-                        }
-                        break;
+                    switch (mMode) {
+                        case ADD:
+                            if (mNameEditText.getText().toString().length() > 0) {
+                                values.put(TasksContract.Columns.TASK_NAME, mNameEditText.getText().toString());
+                                values.put(TasksContract.Columns.TASK_DESCRIPTION, mDescriptionEditText.getText().toString());
+                                values.put(TasksContract.Columns.TASK_SORTORDER, sortOrder);
+                                contentResolver.insert(TasksContract.CONTENT_URI, values);
+                            }
+                            break;
 
-                    case EDIT:
-                        if (!mNameEditText.getText().toString().equals(task.getName())) {
-                            values.put(TasksContract.Columns.TASK_NAME, mNameEditText.getText().toString());
-                        }
-                        if (!mDescriptionEditText.getText().toString().equals(task.getDescription())) {
-                            values.put(TasksContract.Columns.TASK_DESCRIPTION, mDescriptionEditText.getText().toString());
-                        }
-                        if (sortOrder != task.getSortOrder()) {
-                            values.put(TasksContract.Columns.TASK_SORTORDER, sortOrder);
-                        }
-                        if (values.size() > 0) {
-                            String selection = TasksContract.Columns._ID + " = ?";
-                            String[] selectionArgs = {String.valueOf(task.getId())};
-                            contentResolver.update(TasksContract.CONTENT_URI, values, selection, selectionArgs);
-                        }
-                        break;
+                        case EDIT:
+                            if(task == null) break;
+                            if (!mNameEditText.getText().toString().equals(task.getName())) {
+                                values.put(TasksContract.Columns.TASK_NAME, mNameEditText.getText().toString());
+                            }
+                            if (!mDescriptionEditText.getText().toString().equals(task.getDescription())) {
+                                values.put(TasksContract.Columns.TASK_DESCRIPTION, mDescriptionEditText.getText().toString());
+                            }
+                            if (sortOrder != task.getSortOrder()) {
+                                values.put(TasksContract.Columns.TASK_SORTORDER, sortOrder);
+                            }
+                            if (values.size() > 0) {
+                                String selection = TasksContract.Columns._ID + " = ?";
+                                String[] selectionArgs = {String.valueOf(task.getId())};
+                                contentResolver.update(TasksContract.CONTENT_URI, values, selection, selectionArgs);
+                            }
+                            break;
 
-                    default:
-                        throw new IllegalArgumentException(TAG + "onClick() with unknow FragmentMode: " + mMode.toString());
-                }
-                if (mSaveListener != null) {
-                    mSaveListener.onSaveClicked();
+                        default:
+                            throw new IllegalArgumentException(TAG + "onClick() with unknow FragmentMode: " + mMode.toString());
+                    }
+                    if (mSaveListener != null) {
+                        mSaveListener.onSaveClicked();
+                    }
                 }
             }
         });
@@ -138,7 +142,7 @@ public class AddEditActivityFragment extends Fragment {
         return view;
     }
 
-    public boolean canClose() {
+    boolean canClose() {
         return false;// TODO finish this method
     }
 }

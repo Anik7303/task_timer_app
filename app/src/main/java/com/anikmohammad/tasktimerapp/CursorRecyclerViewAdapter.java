@@ -22,7 +22,7 @@ class CursorRecyclerViewAdapter extends RecyclerView.Adapter<CursorRecyclerViewA
         void onDeleteButtonClick(Task task);
     }
 
-    public CursorRecyclerViewAdapter(Cursor cursor, OnTaskClickListener listener) {
+    CursorRecyclerViewAdapter(Cursor cursor, OnTaskClickListener listener) {
         this.mCursor = cursor;
         this.mListener = listener;
     }
@@ -94,7 +94,8 @@ class CursorRecyclerViewAdapter extends RecyclerView.Adapter<CursorRecyclerViewA
      * @param newCursor the cursor to be used
      * @return returns the previously set cursor, if the swap is successful
      */
-    public Cursor swapCursor(Cursor newCursor) {
+    @SuppressWarnings("UnusedReturnValue")
+    Cursor swapCursor(Cursor newCursor) {
         if (newCursor == mCursor) {
             return null;
         }
@@ -121,7 +122,7 @@ class CursorRecyclerViewAdapter extends RecyclerView.Adapter<CursorRecyclerViewA
         private ImageButton editButton;
         private ImageButton deleteButton;
 
-        public TaskViewHolder(View itemView) {
+        TaskViewHolder(View itemView) {
             super(itemView);
             Log.d(TAG, "TaskViewHolder: constructor called");
             this.name = itemView.findViewById(R.id.tli_name);

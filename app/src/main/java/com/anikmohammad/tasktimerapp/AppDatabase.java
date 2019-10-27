@@ -25,7 +25,7 @@ class AppDatabase extends SQLiteOpenHelper {
      * @param context Apps Context
      * @return {@link SQLiteOpenHelper} Object
      */
-    public static AppDatabase getInstance(Context context) {
+    static AppDatabase getInstance(Context context) {
         Log.d(TAG, "getInstance: getting instance");
         if (mInstance == null) {
             Log.d(TAG, "getInstance: creating new instance");
@@ -53,6 +53,7 @@ class AppDatabase extends SQLiteOpenHelper {
     @Override
     public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
         // TODO complete this function
+        //noinspection SwitchStatementWithTooFewBranches
         switch (oldVersion) {
             case 1:
                 // logic from database version 1

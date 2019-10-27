@@ -24,7 +24,7 @@ import java.security.InvalidParameterException;
 public class MainActivityFragment extends Fragment implements LoaderManager.LoaderCallbacks<Cursor> {
     private static final String TAG = "MainActivityFragment";
 
-    public static final int LOADER_ID = 0;
+    private static final int LOADER_ID = 0;
     private CursorRecyclerViewAdapter mAdapter;
 
     public MainActivityFragment() {
@@ -43,7 +43,7 @@ public class MainActivityFragment extends Fragment implements LoaderManager.Load
                              Bundle savedInstanceState) {
         Log.d(TAG, "onCreateView: starts");
         View view = inflater.inflate(R.layout.fragment_main, container, false);
-        RecyclerView recyclerView = (RecyclerView) view.findViewById(R.id.task_list);
+        RecyclerView recyclerView = view.findViewById(R.id.task_list);
         recyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
         mAdapter = new CursorRecyclerViewAdapter(null, (CursorRecyclerViewAdapter.OnTaskClickListener) getActivity());
         recyclerView.setAdapter(mAdapter);
@@ -51,10 +51,12 @@ public class MainActivityFragment extends Fragment implements LoaderManager.Load
         return view;
     }
 
+    @SuppressWarnings("ConstantConditions")
     @NonNull
     @Override
     public Loader<Cursor> onCreateLoader(int id, @Nullable Bundle args) {
         Log.d(TAG, "onCreateLoader: starts with id: " + id);
+        //noinspection SwitchStatementWithTooFewBranches
         switch (id) {
             case LOADER_ID:
                 String[] projection = {

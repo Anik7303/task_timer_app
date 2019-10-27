@@ -2,6 +2,7 @@ package com.anikmohammad.tasktimerapp;
 
 import android.content.ContentProvider;
 import android.content.ContentValues;
+import android.content.Context;
 import android.content.UriMatcher;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
@@ -27,14 +28,14 @@ public class AppProvider extends ContentProvider {
     private static final int TASKS = 100;
     private static final int TASKS_ID = 101;
 
-    private static final int TIMINGS = 200;
-    private static final int TIMINGS_ID = 201;
-
-    private static final int TASK_TIMINGS = 300;
-    private static final int TASK_TIMINGS_ID = 301;
-
-    private static final int TASK_DURATIONS = 400;
-    private static final int TASK_DURATIONS_ID = 401;
+//    private static final int TIMINGS = 200;
+//    private static final int TIMINGS_ID = 201;
+//
+//    private static final int TASK_TIMINGS = 300;
+//    private static final int TASK_TIMINGS_ID = 301;
+//
+//    private static final int TASK_DURATIONS = 400;
+//    private static final int TASK_DURATIONS_ID = 401;
 
     private static UriMatcher buildUriMatcher() {
         final UriMatcher matcher = new UriMatcher(UriMatcher.NO_MATCH);
@@ -106,7 +107,10 @@ public class AppProvider extends ContentProvider {
 
         SQLiteDatabase db = mOpenHelper.getReadableDatabase();
         Cursor cursor = queryBuilder.query(db, projection, selection, selectionArgs, null, null, sortOrder);
-        cursor.setNotificationUri(getContext().getContentResolver(), uri);
+        Context context = getContext();
+        if(context != null) {
+            cursor.setNotificationUri(context.getContentResolver(), uri);
+        }
         return cursor;
     }
 
@@ -149,13 +153,17 @@ public class AppProvider extends ContentProvider {
         long recordId;
         SQLiteDatabase db;
 
+        //noinspection SwitchStatementWithTooFewBranches
         switch (match) {
             case TASKS:
                 db = mOpenHelper.getWritableDatabase();
                 recordId = db.insert(TasksContract.TABLE_NAME, null, values);
                 if (recordId >= 0) {
                     Log.d(TAG, "insert: recordId: " + recordId);
-                    getContext().getContentResolver().notifyChange(uri, null);
+                    Context context = getContext();
+                    if(context != null) {
+                        context.getContentResolver().notifyChange(uri, null);
+                    }
                     return TasksContract.buildUri(recordId);
                 } else {
                     throw new android.database.SQLException("Failed to insert into " + uri.toString());
@@ -250,7 +258,10 @@ public class AppProvider extends ContentProvider {
 
         Log.d(TAG, "update: count: " + count);
         if (count > 0) {
-            getContext().getContentResolver().notifyChange(uri, null);
+            Context context = getContext();
+            if(context != null) {
+                context.getContentResolver().notifyChange(uri, null);
+            }
             return count;
         } else {
             throw new android.database.SQLException("Failed to delete with uri: " + uri.toString());
@@ -318,7 +329,10 @@ public class AppProvider extends ContentProvider {
 
         Log.d(TAG, "update: count: " + count);
         if (count > 0) {
-            getContext().getContentResolver().notifyChange(uri, null);
+            Context context = getContext();
+            if(context != null) {
+                context.getContentResolver().notifyChange(uri, null);
+            }
             return count;
         } else {
             throw new android.database.SQLException("Failed to update with uri: " + uri.toString());
