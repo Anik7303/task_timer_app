@@ -2,14 +2,17 @@ package com.anikmohammad.tasktimerapp;
 
 import android.annotation.SuppressLint;
 import android.app.AlertDialog;
+import android.content.ActivityNotFoundException;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.net.Uri;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
@@ -100,6 +103,22 @@ public class MainActivity extends AppCompatActivity implements CursorRecyclerVie
 
         TextView tv = messageView.findViewById(R.id.about_version);
         tv.setText("v" + BuildConfig.VERSION_NAME);
+        TextView tv_about = messageView.findViewById(R.id.about_url);
+        if(tv_about != null) {
+            tv_about.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    Intent intent = new Intent(Intent.ACTION_VIEW);
+                    String s = "https://" + ((TextView) v).getText().toString();
+                    intent.setData(Uri.parse(s));
+                    try {
+                        startActivity(intent);
+                    } catch(ActivityNotFoundException e) {
+                        Toast.makeText(getApplicationContext(), "No browser application found", Toast.LENGTH_SHORT).show();
+                    }
+                }
+            });
+        }
 
         mDialog.show();
     }
