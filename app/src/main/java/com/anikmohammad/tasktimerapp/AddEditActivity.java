@@ -24,13 +24,15 @@ public class AddEditActivity extends AppCompatActivity implements AddEditActivit
         Toolbar toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
 
-        Bundle arguments = getIntent().getExtras();
-        AddEditActivityFragment fragment = new AddEditActivityFragment();
-        fragment.setArguments(arguments);
+        if(savedInstanceState == null) {
+            Bundle arguments = getIntent().getExtras();
+            AddEditActivityFragment fragment = new AddEditActivityFragment();
+            fragment.setArguments(arguments);
 
-        fragmentManager.beginTransaction()
-                .replace(R.id.fragment, fragment)
-                .commit();
+            fragmentManager.beginTransaction()
+                    .replace(R.id.fragment, fragment)
+                    .commit();
+        }
 
         ActionBar actionBar = getSupportActionBar();
         if(actionBar != null) {

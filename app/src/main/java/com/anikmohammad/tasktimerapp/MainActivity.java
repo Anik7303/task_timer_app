@@ -4,6 +4,7 @@ import android.annotation.SuppressLint;
 import android.content.ActivityNotFoundException;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.res.Configuration;
 import android.net.Uri;
 import android.os.Bundle;
 import android.util.Log;
@@ -34,16 +35,38 @@ public class MainActivity extends AppCompatActivity implements CursorRecyclerVie
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
+        Log.d(TAG, "onCreate: starts");
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         setTitle(R.string.app_name);
         Toolbar toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
 
-        if (findViewById(R.id.task_detail_container) != null) {
-            // The detail container view will be present only in the large-screen layouts (res/values-land and res/values-sw600dp).
-            // If this view is present than the activity should be in two-pane mode.
-            mTwoPane = true;
+//        if (findViewById(R.id.task_detail_container) != null) {
+//            // The detail container view will be present only in the large-screen layouts (res/values-land and res/values-sw600dp).
+//            // If this view is present than the activity should be in two-pane mode.
+//            mTwoPane = true;
+//        }
+        mTwoPane = (getResources().getConfiguration().orientation == Configuration.ORIENTATION_LANDSCAPE);
+        Log.d(TAG, "onCreate: twoPaneMode: " + mTwoPane);
+
+        FragmentManager fragmentManager = getSupportFragmentManager();
+        // if the AddEditActivity fragment exists, we're editing
+        boolean editing = fragmentManager.findFragmentById(R.id.task_detail_container) != null;
+
+        Log.d(TAG, "onCreate: editing is " + editing);
+        View addEditFragment = findViewById(R.id.task_detail_container);
+        View mainFragment = findViewById(R.id.fragment);
+
+        if(mTwoPane) {
+            addEditFragment.setVisibility(View.VISIBLE);
+            mainFragment.setVisibility(View.VISIBLE);
+        } else if(editing) {
+            mainFragment.setVisibility(View.GONE);
+            addEditFragment.setVisibility(View.VISIBLE);
+        } else {
+            addEditFragment.setVisibility(View.GONE);
+            mainFragment.setVisibility(View.VISIBLE);
         }
     }
 
@@ -125,24 +148,24 @@ public class MainActivity extends AppCompatActivity implements CursorRecyclerVie
 
     private void taskEditRequest(Task task) {
         Log.d(TAG, "taskEditRequest: starts");
-        if (mTwoPane) {
-            Log.d(TAG, "taskEditRequest: in two-pane mode (tablet)");
-            AddEditActivityFragment fragment = new AddEditActivityFragment();
 
-            Bundle arguments = new Bundle();
-            arguments.putSerializable(Task.class.getSimpleName(), task);
-            fragment.setArguments(arguments);
+        Log.d(TAG, "taskEditRequest: in two-pane mode (tablet)");
+        AddEditActivityFragment fragment = new AddEditActivityFragment();
 
-            getSupportFragmentManager().beginTransaction()
-                    .replace(R.id.task_detail_container, fragment)
-                    .commit();
-        } else {
-            Log.d(TAG, "taskEditRequest: in single-pane mode (phone)");
-            Intent detailIntent = new Intent(this, AddEditActivity.class);
-            if (task != null) {
-                detailIntent.putExtra(Task.class.getSimpleName(), task);
-            }
-            startActivity(detailIntent);
+        Bundle arguments = new Bundle();
+        arguments.putSerializable(Task.class.getSimpleName(), task);
+        fragment.setArguments(arguments);
+
+        getSupportFragmentManager().beginTransaction()
+                .replace(R.id.task_detail_container, fragment)
+                .commit();
+
+        if(!mTwoPane) {
+            View addEditFragment = findViewById(R.id.task_detail_container);
+            View mainFragment = findViewById(R.id.fragment);
+
+            addEditFragment.setVisibility(View.VISIBLE);
+            mainFragment.setVisibility(View.GONE);
         }
     }
 
@@ -173,6 +196,14 @@ public class MainActivity extends AppCompatActivity implements CursorRecyclerVie
             fragmentManager.beginTransaction()
                     .remove(fragment)
                     .commit();
+        }
+
+        View addEditFragment = findViewById(R.id.task_detail_container);
+        View mainFragment = findViewById(R.id.fragment);
+
+        if(!mTwoPane) {
+            addEditFragment.setVisibility(View.GONE);
+            mainFragment.setVisibility(View.VISIBLE);
         }
     }
 

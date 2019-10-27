@@ -13,6 +13,9 @@ import android.widget.Button;
 import android.widget.EditText;
 
 import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+import androidx.appcompat.app.ActionBar;
+import androidx.appcompat.app.AppCompatActivity;
 import androidx.fragment.app.Fragment;
 
 /**
@@ -49,10 +52,27 @@ public class AddEditActivityFragment extends Fragment {
     }
 
     @Override
+    public void onActivityCreated(@Nullable Bundle savedInstanceState) {
+        super.onActivityCreated(savedInstanceState);
+        setActionBar(true);
+    }
+
+    @Override
     public void onDetach() {
         Log.d(TAG, "onDetach: starts");
         super.onDetach();
         mSaveListener = null;
+        setActionBar(false);
+    }
+
+    private void setActionBar(boolean value) {
+        AppCompatActivity activity = (AppCompatActivity) getActivity();
+        if(activity != null) {
+            ActionBar actionBar = activity.getSupportActionBar();
+            if (actionBar != null) {
+                actionBar.setDisplayHomeAsUpEnabled(value);
+            }
+        }
     }
 
     @Override
