@@ -4,6 +4,7 @@ import android.app.Activity;
 import android.content.ContentResolver;
 import android.content.ContentValues;
 import android.content.Context;
+import android.content.res.Configuration;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -67,7 +68,7 @@ public class AddEditActivityFragment extends Fragment {
 
     private void setActionBar(boolean value) {
         AppCompatActivity activity = (AppCompatActivity) getActivity();
-        if(activity != null) {
+        if(activity != null && activity.getResources().getConfiguration().orientation == Configuration.ORIENTATION_PORTRAIT) {
             ActionBar actionBar = activity.getSupportActionBar();
             if (actionBar != null) {
                 actionBar.setDisplayHomeAsUpEnabled(value);

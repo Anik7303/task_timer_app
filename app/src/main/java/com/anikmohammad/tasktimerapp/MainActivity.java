@@ -35,6 +35,7 @@ public class MainActivity extends AppCompatActivity implements CursorRecyclerVie
 
     private View addEditFragment;
     private View mainFragment;
+    private FragmentManager fragmentManager;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -52,7 +53,7 @@ public class MainActivity extends AppCompatActivity implements CursorRecyclerVie
 //        }
         mTwoPane = getResources().getConfiguration().orientation == Configuration.ORIENTATION_LANDSCAPE;
 
-        FragmentManager fragmentManager = getSupportFragmentManager();
+        fragmentManager = getSupportFragmentManager();
         // if the AddEditActivity fragment exists, we're editing
         boolean editing = fragmentManager.findFragmentById(R.id.task_detail_container) != null;
 
@@ -85,6 +86,15 @@ public class MainActivity extends AppCompatActivity implements CursorRecyclerVie
     @Override
     public boolean onOptionsItemSelected(@NonNull MenuItem item) {
         switch (item.getItemId()) {
+            case android.R.id.home:
+                // go back to the parent activity
+                AddEditActivityFragment fragment = (AddEditActivityFragment) fragmentManager.findFragmentById(R.id.task_detail_container);
+                if(fragment != null && fragment.canClose()) {
+                    fragmentManager.beginTransaction().remove(fragment).commit();
+                } else {
+                    showCancelEditDialog();
+                }
+                break;
             case R.id.mainmenu_add_task:
                 // create new task
                 taskEditRequest(null);
@@ -160,7 +170,7 @@ public class MainActivity extends AppCompatActivity implements CursorRecyclerVie
         arguments.putSerializable(Task.class.getSimpleName(), task);
         fragment.setArguments(arguments);
 
-        getSupportFragmentManager().beginTransaction()
+        fragmentManager.beginTransaction()
                 .replace(R.id.task_detail_container, fragment)
                 .commit();
 
@@ -186,13 +196,12 @@ public class MainActivity extends AppCompatActivity implements CursorRecyclerVie
         args.putInt(AppDialog.DIALOG_POSITIVE_RID, R.string.deldiag_positive_caption);
         args.putLong(TasksContract.Columns._ID, task.getId());
         dialog.setArguments(args);
-        dialog.show(getSupportFragmentManager(), null);
+        dialog.show(fragmentManager, null);
     }
 
     @Override
     public void onSaveClicked() {
         Log.d(TAG, "onSaveClicked: starts");
-        FragmentManager fragmentManager = getSupportFragmentManager();
         Fragment fragment = fragmentManager.findFragmentById(R.id.task_detail_container);
         if (fragment != null) {
             fragmentManager.beginTransaction()
@@ -246,9 +255,16 @@ public class MainActivity extends AppCompatActivity implements CursorRecyclerVie
 //                // close the app without saving the edited data
 //                finish();
                 // Close the fragment without saving the edited data and stopping the app from closing
-                AddEditActivityFragment fragment = (AddEditActivityFragment) getSupportFragmentManager().findFragmentById(R.id.task_detail_container);
+                AddEditActivityFragment fragment = (AddEditActivityFragment) fragmentManager.findFragmentById(R.id.task_detail_container);
                 if(fragment != null) {
-                    getSupportFragmentManager().beginTransaction().remove(fragment).commit();
+                    fragmentManager.beginTransaction().remove(fragment).commit();
+                }
+
+                if(!mTwoPane) {
+                    // we just removed addEditFragment, so hide this fragment
+                    // and show mainFragment
+                    addEditFragment.setVisibility(View.GONE);
+                    mainFragment.setVisibility(View.VISIBLE);
                 }
                 break;
 
@@ -265,21 +281,25 @@ public class MainActivity extends AppCompatActivity implements CursorRecyclerVie
     @Override
     public void onBackPressed() {
         Log.d(TAG, "onBackPressed: called");
-        AddEditActivityFragment fragment = (AddEditActivityFragment) getSupportFragmentManager().findFragmentById(R.id.task_detail_container);
+        AddEditActivityFragment fragment = (AddEditActivityFragment) fragmentManager.findFragmentById(R.id.task_detail_container);
         if(fragment == null || fragment.canClose()) {
             super.onBackPressed();
         } else {
-            // show dialogue to get confirmation to quit editing
-            AppDialog dialog = new AppDialog();
-            Bundle args = new Bundle();
-            args.putInt(AppDialog.DIALOG_ID, DIALOG_ID_CANCEL_EDIT);
-            args.putString(AppDialog.DIALOG_TITLE, "Quit?");
-            args.putString(AppDialog.DIALOG_MESSAGE, getString(R.string.cancelEditDiag_message));
-            args.putInt(AppDialog.DIALOG_POSITIVE_RID, R.string.cancelEditDiag_positive_caption);
-            args.putInt(AppDialog.DIALOG_NEGATIVE_RID, R.string.cancelEditDiag_negative_caption);
-            dialog.setArguments(args);
-            dialog.show(getSupportFragmentManager(), null);
+            showCancelEditDialog();
         }
+    }
+
+    private void showCancelEditDialog() {
+        // show dialogue to get confirmation to quit editing
+        AppDialog dialog = new AppDialog();
+        Bundle args = new Bundle();
+        args.putInt(AppDialog.DIALOG_ID, DIALOG_ID_CANCEL_EDIT);
+        args.putString(AppDialog.DIALOG_TITLE, "Quit?");
+        args.putString(AppDialog.DIALOG_MESSAGE, getString(R.string.cancelEditDiag_message));
+        args.putInt(AppDialog.DIALOG_POSITIVE_RID, R.string.cancelEditDiag_positive_caption);
+        args.putInt(AppDialog.DIALOG_NEGATIVE_RID, R.string.cancelEditDiag_negative_caption);
+        dialog.setArguments(args);
+        dialog.show(fragmentManager, null);
     }
 
     @Override
