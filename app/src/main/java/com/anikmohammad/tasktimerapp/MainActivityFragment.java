@@ -25,10 +25,17 @@ public class MainActivityFragment extends Fragment implements LoaderManager.Load
     private static final String TAG = "MainActivityFragment";
 
     private static final int LOADER_ID = 0;
-    private CursorRecyclerViewAdapter mAdapter;
+    private CursorRecyclerViewAdapter mAdapter = null;
 
     public MainActivityFragment() {
         Log.d(TAG, "MainActivityFragment: starts");
+    }
+
+    @Override
+    public void onCreate(@Nullable Bundle savedInstanceState) {
+        Log.d(TAG, "onCreate: called");
+        super.onCreate(savedInstanceState);
+        setRetainInstance(true);
     }
 
     @Override
@@ -45,7 +52,11 @@ public class MainActivityFragment extends Fragment implements LoaderManager.Load
         View view = inflater.inflate(R.layout.fragment_main, container, false);
         RecyclerView recyclerView = view.findViewById(R.id.task_list);
         recyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
-        mAdapter = new CursorRecyclerViewAdapter(null, (CursorRecyclerViewAdapter.OnTaskClickListener) getActivity());
+        if(mAdapter == null) {
+            mAdapter = new CursorRecyclerViewAdapter(null, (CursorRecyclerViewAdapter.OnTaskClickListener) getActivity());
+        } else {
+            mAdapter.setListener((CursorRecyclerViewAdapter.OnTaskClickListener) getActivity());
+        }
         recyclerView.setAdapter(mAdapter);
         Log.d(TAG, "onCreateView: returing");
         return view;

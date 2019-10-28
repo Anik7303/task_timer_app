@@ -45,11 +45,6 @@ public class MainActivity extends AppCompatActivity implements CursorRecyclerVie
         Toolbar toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
 
-//        if (findViewById(R.id.task_detail_container) != null) {
-//            // The detail container view will be present only in the large-screen layouts (res/values-land and res/values-sw600dp).
-//            // If this view is present than the activity should be in two-pane mode.
-//            mTwoPane = true;
-//        }
         mTwoPane = getResources().getConfiguration().orientation == Configuration.ORIENTATION_LANDSCAPE;
 
         fragmentManager = getSupportFragmentManager();
