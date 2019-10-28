@@ -42,7 +42,6 @@ public class MainActivity extends AppCompatActivity implements CursorRecyclerVie
         Log.d(TAG, "onCreate: starts");
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-        setTitle(R.string.app_name);
         Toolbar toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
 
@@ -61,6 +60,7 @@ public class MainActivity extends AppCompatActivity implements CursorRecyclerVie
         mainFragment = findViewById(R.id.fragment);
 
         if(mTwoPane) {
+            //noinspection ConstantConditions
             Log.d(TAG, "onCreate: twoPaneMode: " + mTwoPane);
             mainFragment.setVisibility(View.VISIBLE);
             addEditFragment.setVisibility(View.VISIBLE);

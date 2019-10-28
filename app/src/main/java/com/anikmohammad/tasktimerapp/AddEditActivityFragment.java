@@ -87,7 +87,6 @@ public class AddEditActivityFragment extends Fragment {
         final EditText mSortOrderEditText = view.findViewById(R.id.addedit_sortorder);
         final Button mSaveButton = view.findViewById(R.id.addedit_save);
 
-//        Bundle arguments = getActivity().getIntent().getExtras(); // This is the wrong way of doing this
         Bundle arguments = getArguments();
 
         final Task task;
