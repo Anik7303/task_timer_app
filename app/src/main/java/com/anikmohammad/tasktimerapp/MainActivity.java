@@ -33,6 +33,9 @@ public class MainActivity extends AppCompatActivity implements CursorRecyclerVie
     private AlertDialog mDialog = null; // module scope because we need to dismiss it in onStop
                                         // e.g. when orientation changes to avoid memory leaks
 
+    private View addEditFragment;
+    private View mainFragment;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         Log.d(TAG, "onCreate: starts");
@@ -47,26 +50,28 @@ public class MainActivity extends AppCompatActivity implements CursorRecyclerVie
 //            // If this view is present than the activity should be in two-pane mode.
 //            mTwoPane = true;
 //        }
-        mTwoPane = (getResources().getConfiguration().orientation == Configuration.ORIENTATION_LANDSCAPE);
-        Log.d(TAG, "onCreate: twoPaneMode: " + mTwoPane);
+        mTwoPane = getResources().getConfiguration().orientation == Configuration.ORIENTATION_LANDSCAPE;
 
         FragmentManager fragmentManager = getSupportFragmentManager();
         // if the AddEditActivity fragment exists, we're editing
         boolean editing = fragmentManager.findFragmentById(R.id.task_detail_container) != null;
 
-        Log.d(TAG, "onCreate: editing is " + editing);
-        View addEditFragment = findViewById(R.id.task_detail_container);
-        View mainFragment = findViewById(R.id.fragment);
+        addEditFragment = findViewById(R.id.task_detail_container);
+        mainFragment = findViewById(R.id.fragment);
 
         if(mTwoPane) {
-            addEditFragment.setVisibility(View.VISIBLE);
+            Log.d(TAG, "onCreate: twoPaneMode: " + mTwoPane);
             mainFragment.setVisibility(View.VISIBLE);
+            addEditFragment.setVisibility(View.VISIBLE);
         } else if(editing) {
+            Log.d(TAG, "onCreate: single-pane mode, editing");
+            // hide the main fragment to make room for editing
             mainFragment.setVisibility(View.GONE);
             addEditFragment.setVisibility(View.VISIBLE);
         } else {
-            addEditFragment.setVisibility(View.GONE);
+            Log.d(TAG, "onCreate: single-pane mode, but not editing");
             mainFragment.setVisibility(View.VISIBLE);
+            addEditFragment.setVisibility(View.GONE);
         }
     }
 
@@ -149,7 +154,6 @@ public class MainActivity extends AppCompatActivity implements CursorRecyclerVie
     private void taskEditRequest(Task task) {
         Log.d(TAG, "taskEditRequest: starts");
 
-        Log.d(TAG, "taskEditRequest: in two-pane mode (tablet)");
         AddEditActivityFragment fragment = new AddEditActivityFragment();
 
         Bundle arguments = new Bundle();
@@ -161,9 +165,7 @@ public class MainActivity extends AppCompatActivity implements CursorRecyclerVie
                 .commit();
 
         if(!mTwoPane) {
-            View addEditFragment = findViewById(R.id.task_detail_container);
-            View mainFragment = findViewById(R.id.fragment);
-
+            // hide the mainFragment and show the addEditFragment
             addEditFragment.setVisibility(View.VISIBLE);
             mainFragment.setVisibility(View.GONE);
         }
@@ -198,10 +200,9 @@ public class MainActivity extends AppCompatActivity implements CursorRecyclerVie
                     .commit();
         }
 
-        View addEditFragment = findViewById(R.id.task_detail_container);
-        View mainFragment = findViewById(R.id.fragment);
-
         if(!mTwoPane) {
+            // we just removed the editing fragment, so hide the addEditFragment
+            // and make the mainFragment visible
             addEditFragment.setVisibility(View.GONE);
             mainFragment.setVisibility(View.VISIBLE);
         }
