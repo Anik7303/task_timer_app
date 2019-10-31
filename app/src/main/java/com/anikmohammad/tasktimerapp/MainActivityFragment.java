@@ -22,7 +22,9 @@ import java.security.InvalidParameterException;
 /**
  * A placeholder fragment containing a simple view.
  */
-public class MainActivityFragment extends Fragment implements LoaderManager.LoaderCallbacks<Cursor>, CursorRecyclerViewAdapter.OnTaskClickListener {
+public class MainActivityFragment extends Fragment implements
+        LoaderManager.LoaderCallbacks<Cursor>,
+        CursorRecyclerViewAdapter.OnTaskClickListener {
     private static final String TAG = "MainActivityFragment";
 
     private static final int LOADER_ID = 0;

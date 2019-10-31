@@ -21,7 +21,9 @@ import androidx.appcompat.widget.Toolbar;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
 
-public class MainActivity extends AppCompatActivity implements CursorRecyclerViewAdapter.OnTaskClickListener, AddEditActivityFragment.OnSaveClicked, AppDialog.DialogEvents {
+public class MainActivity extends AppCompatActivity implements
+        CursorRecyclerViewAdapter.OnTaskClickListener,
+        AddEditActivityFragment.OnSaveClicked, AppDialog.DialogEvents {
     private static final String TAG = "MainActivity";
 
     // Whether or not the activity is in two pane mode
