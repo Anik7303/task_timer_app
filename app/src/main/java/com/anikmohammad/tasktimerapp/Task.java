@@ -3,7 +3,7 @@ package com.anikmohammad.tasktimerapp;
 import java.io.Serializable;
 
 class Task implements Serializable {
-    public static final long serialVersionUID = 20190917L;
+    private static final long serialVersionUID = 20190917L;
 
     private long mId;
     private final String mName;
@@ -17,11 +17,11 @@ class Task implements Serializable {
         this.mSortOrder = sortOrder;
     }
 
-    public long getId() {
+    long getId() {
         return mId;
     }
 
-    public String getName() {
+    String getName() {
         return mName;
     }
 
@@ -33,7 +33,7 @@ class Task implements Serializable {
         return mSortOrder;
     }
 
-    public void setId(long id) {
+    void setId(long id) {
         this.mId = id;
     }
 

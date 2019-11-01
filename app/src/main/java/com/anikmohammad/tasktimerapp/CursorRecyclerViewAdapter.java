@@ -18,9 +18,9 @@ class CursorRecyclerViewAdapter extends
     private OnTaskClickListener mListener;
 
     interface OnTaskClickListener {
-        void onEditButtonClick(Task task);
-
-        void onDeleteButtonClick(Task task);
+        void onEditButtonClick(@NonNull Task task);
+        void onDeleteButtonClick(@NonNull Task task);
+        void onTaskLongClick(@NonNull Task task);
     }
 
     CursorRecyclerViewAdapter(Cursor cursor, OnTaskClickListener listener) {
@@ -70,8 +70,17 @@ class CursorRecyclerViewAdapter extends
                         default:
                             Log.d(TAG, "onClick: unknown view id: " + v.getId());
                     }
-                    Log.d(TAG, "onClick: id: " + task.getId());
-                    Log.d(TAG, "onClick: name: " + task.getName());
+                }
+            };
+
+            View.OnLongClickListener buttonLongListener = new View.OnLongClickListener() {
+                @Override
+                public boolean onLongClick(View view) {
+                    if(mListener != null) {
+                        mListener.onTaskLongClick(task);
+                        return true;
+                    }
+                    return false;
                 }
             };
 
@@ -81,6 +90,7 @@ class CursorRecyclerViewAdapter extends
             holder.deleteButton.setVisibility(View.VISIBLE);
             holder.editButton.setOnClickListener(buttonListener);
             holder.deleteButton.setOnClickListener(buttonListener);
+            holder.itemView.setOnLongClickListener(buttonLongListener);
         }
     }
 
@@ -116,20 +126,19 @@ class CursorRecyclerViewAdapter extends
     }
 
     static class TaskViewHolder extends RecyclerView.ViewHolder {
-        private static final String TAG = "TaskViewHolder";
-
         private TextView name;
         private TextView description;
         private ImageButton editButton;
         private ImageButton deleteButton;
+        private View itemView;
 
         TaskViewHolder(View itemView) {
             super(itemView);
-            Log.d(TAG, "TaskViewHolder: constructor called");
             this.name = itemView.findViewById(R.id.tli_name);
             this.description = itemView.findViewById(R.id.tli_description);
             this.editButton = itemView.findViewById(R.id.tli_edit_button);
             this.deleteButton = itemView.findViewById(R.id.tli_delete_button);
+            this.itemView = itemView;
         }
     }
 }

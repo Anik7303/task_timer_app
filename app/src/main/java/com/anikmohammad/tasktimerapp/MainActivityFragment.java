@@ -55,7 +55,8 @@ public class MainActivityFragment extends Fragment implements
     }
 
     @Override
-    public void onEditButtonClick(Task task) {
+    public void onEditButtonClick(@NonNull Task task) {
+        Log.d(TAG, "onEditButtonClick: called");
         CursorRecyclerViewAdapter.OnTaskClickListener listener = (CursorRecyclerViewAdapter.OnTaskClickListener) getActivity();
         if(listener != null) {
             listener.onEditButtonClick(task);
@@ -63,10 +64,20 @@ public class MainActivityFragment extends Fragment implements
     }
 
     @Override
-    public void onDeleteButtonClick(Task task) {
+    public void onDeleteButtonClick(@NonNull Task task) {
+        Log.d(TAG, "onDeleteButtonClick: called");
         CursorRecyclerViewAdapter.OnTaskClickListener listener = (CursorRecyclerViewAdapter.OnTaskClickListener) getActivity();
         if(listener != null) {
             listener.onDeleteButtonClick(task);
+        }
+    }
+
+    @Override
+    public void onTaskLongClick(@NonNull Task task) {
+        Log.d(TAG, "onTaskLongClick: called");
+        CursorRecyclerViewAdapter.OnTaskClickListener listener = (CursorRecyclerViewAdapter.OnTaskClickListener) getActivity();
+        if(listener != null) {
+            listener.onTaskLongClick(task);
         }
     }
 

@@ -39,6 +39,8 @@ public class MainActivity extends AppCompatActivity implements
     private View mainFragment;
     private FragmentManager fragmentManager;
 
+    private Timing mCurrentTiming = null;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         Log.d(TAG, "onCreate: starts");
@@ -179,12 +181,14 @@ public class MainActivity extends AppCompatActivity implements
     }
 
     @Override
-    public void onEditButtonClick(Task task) {
+    public void onEditButtonClick(@NonNull Task task) {
+        Log.d(TAG, "onEditButtonClick: called");
         taskEditRequest(task);
     }
 
     @Override
-    public void onDeleteButtonClick(Task task) {
+    public void onDeleteButtonClick(@NonNull Task task) {
+        Log.d(TAG, "onDeleteButtonClick: called");
         AppDialog dialog = new AppDialog();
         Bundle args = new Bundle();
         args.putInt(AppDialog.DIALOG_ID, DIALOG_ID_DELETE_TASK);
@@ -194,6 +198,31 @@ public class MainActivity extends AppCompatActivity implements
         args.putLong(TasksContract.Columns._ID, task.getId());
         dialog.setArguments(args);
         dialog.show(fragmentManager, null);
+    }
+
+    @SuppressLint("DefaultLocale")
+    @Override
+    public void onTaskLongClick(@NonNull Task task) {
+        Log.d(TAG, "onTaskLongClick: called");
+        Toast.makeText(getApplicationContext(), String.format("Task %s (%d) clicked", task.getName(), task.getId()), Toast.LENGTH_SHORT).show();
+        TextView textView = findViewById(R.id.current_task);
+        if(mCurrentTiming != null) {
+            if(task.getId() == mCurrentTiming.getTask().getId()) {
+                //The current task was tapped a second time, so stop timing
+                // TODO saveTiming(mCurrentTiming);
+                mCurrentTiming = null;
+                textView.setText(R.string.no_task_selected);
+            } else {
+                // a new task is being timed, so stop the old one and start timing the new task
+                // TODO saveTiming(mCurrentTiming);
+                mCurrentTiming = new Timing(task);
+                textView.setText(getString(R.string.timing_task_name, task.getName()));
+            }
+        } else {
+            // no task being timed at the moment, so start timing a new task
+            mCurrentTiming = new Timing(task);
+            textView.setText(getString(R.string.timing_task_name, task.getName()));
+        }
     }
 
     @Override

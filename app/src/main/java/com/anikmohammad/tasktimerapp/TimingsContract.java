@@ -8,10 +8,10 @@ import static com.anikmohammad.tasktimerapp.AppProvider.CONTENT_AUTHORITY;
 import static com.anikmohammad.tasktimerapp.AppProvider.CONTENT_AUTHORITY_URI;
 
 /**
- * Contract class for the Tasks Table
+ * Contract class for the Timings table
  */
-public class TasksContract {
-    static final String TABLE_NAME = "Tasks";
+public class TimingsContract {
+    static final String TABLE_NAME = "Timings";
 
     public static final Uri CONTENT_URI = Uri.withAppendedPath(CONTENT_AUTHORITY_URI, TABLE_NAME);
 
@@ -21,7 +21,7 @@ public class TasksContract {
     /**
      * Get the uri for database query, insert, update or delete functionality
      *
-     * @param id the task id
+     * @param id the timing id
      * @return returns the required uri
      */
     public static Uri buildUri(long id) {
@@ -43,9 +43,9 @@ public class TasksContract {
      */
     public static class Columns {
         public static final String _ID = BaseColumns._ID;
-        public static final String TASK_NAME = "Name";
-        public static final String TASK_DESCRIPTION = "Description";
-        public static final String TASK_SORTORDER = "SortOrder";
+        public static final String TIMING_TASK_ID = "TaskId";
+        public static final String TIMING_START_TIME = "StartTime";
+        public static final String TIMING_DURATION = "Duration";
 
         private Columns() {
             // making constructor private to prevent instantiation
