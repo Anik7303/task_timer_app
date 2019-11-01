@@ -12,4 +12,4 @@
 /captures
 .externalNativeBuild
 .cxx
-TaskTimer-v1.db
+TaskTimer*.db
