@@ -26,34 +26,26 @@ class Timing implements Serializable {
         return m_Id;
     }
 
-    void setId(long id) {
-        m_Id = id;
-    }
-
     Task getTask() {
         return mTask;
-    }
-
-    void setTask(Task task) {
-        mTask = task;
     }
 
     long getStartTime() {
         return mStartTime;
     }
 
-    void setStartTime(long startTime) {
-        mStartTime = startTime;
-    }
-
     long getDuration() {
         return mDuration;
+    }
+
+    void setId(long id) {
+        m_Id = id;
     }
 
     void setDuration() {
         // set mDuration to current time minus mStartTime
         Date currentTime = new Date();
-        mDuration = (currentTime.getTime() / 1000) - mDuration; // working with seconds
+        mDuration = (currentTime.getTime() / 1000) - mStartTime; // working with seconds
         Log.d(TAG, mTask.getName() + " -> start time: " + mStartTime + " | duration: " + mDuration);
     }
 }

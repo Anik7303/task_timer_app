@@ -1,12 +1,15 @@
 package com.anikmohammad.tasktimerapp;
 
+import android.annotation.SuppressLint;
 import android.app.Activity;
+import android.content.ContentValues;
 import android.database.Cursor;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -30,6 +33,8 @@ public class MainActivityFragment extends Fragment implements
     private static final int LOADER_ID = 0;
     private CursorRecyclerViewAdapter mAdapter = null;
 
+    private Timing mCurrentTiming = null;
+
     public MainActivityFragment() {
         Log.d(TAG, "MainActivityFragment: starts");
     }
@@ -52,6 +57,7 @@ public class MainActivityFragment extends Fragment implements
         }
 
         LoaderManager.getInstance(this).initLoader(LOADER_ID, null, this);
+        setTimingText(mCurrentTiming);
     }
 
     @Override
@@ -72,18 +78,57 @@ public class MainActivityFragment extends Fragment implements
         }
     }
 
+    @SuppressLint("DefaultLocale")
     @Override
     public void onTaskLongClick(@NonNull Task task) {
         Log.d(TAG, "onTaskLongClick: called");
-        CursorRecyclerViewAdapter.OnTaskClickListener listener = (CursorRecyclerViewAdapter.OnTaskClickListener) getActivity();
-        if(listener != null) {
-            listener.onTaskLongClick(task);
+        if(mCurrentTiming != null) {
+            if(task.getId() == mCurrentTiming.getTask().getId()) {
+                //The current task was tapped a second time, so stop timing
+                saveTiming(mCurrentTiming);
+                mCurrentTiming = null;
+                setTimingText(null);
+            } else {
+                // a new task is being timed, so stop the old one and start timing the new task
+                saveTiming(mCurrentTiming);
+                mCurrentTiming = new Timing(task);
+                setTimingText(mCurrentTiming);
+            }
+        } else {
+            // no task being timed at the moment, so start timing a new task
+            mCurrentTiming = new Timing(task);
+            setTimingText(mCurrentTiming);
+        }
+    }
+
+    private void saveTiming(Timing currentTiming) {
+        Log.d(TAG, "saveTiming: called with task: " + currentTiming.getTask().getName());
+
+        // if we have an open timing, then set the duration
+        currentTiming.setDuration();
+
+        ContentValues values = new ContentValues();
+        values.put(TimingsContract.Columns.TIMING_TASK_ID, currentTiming.getTask().getId());
+        values.put(TimingsContract.Columns.TIMING_START_TIME, currentTiming.getStartTime());
+        values.put(TimingsContract.Columns.TIMING_DURATION, currentTiming.getDuration());
+
+        // update table in database
+        //noinspection ConstantConditions
+        getActivity().getContentResolver().insert(TimingsContract.CONTENT_URI, values);
+    }
+
+    private void setTimingText(Timing currentTiming) {
+        @SuppressWarnings("ConstantConditions")
+        TextView textView = getActivity().findViewById(R.id.current_task);
+        if(currentTiming != null) {
+            textView.setText(getString(R.string.timing_task_name, currentTiming.getTask().getName()));
+        } else {
+            textView.setText(R.string.no_task_selected);
         }
     }
 
     @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container,
-                             Bundle savedInstanceState) {
+    public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         Log.d(TAG, "onCreateView: starts");
         View view = inflater.inflate(R.layout.fragment_main, container, false);
         RecyclerView recyclerView = view.findViewById(R.id.task_list);
