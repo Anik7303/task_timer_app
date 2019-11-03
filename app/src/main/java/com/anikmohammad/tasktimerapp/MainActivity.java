@@ -21,6 +21,8 @@ import androidx.appcompat.widget.Toolbar;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
 
+import com.anikmohammad.tasktimerapp.debug.TestData;
+
 public class MainActivity extends AppCompatActivity implements
         CursorRecyclerViewAdapter.OnTaskClickListener,
         AddEditActivityFragment.OnSaveClicked, AppDialog.DialogEvents {
@@ -79,6 +81,11 @@ public class MainActivity extends AppCompatActivity implements
     public boolean onCreateOptionsMenu(Menu menu) {
         // inflate the menu; this adds items to the action bar if needed
         getMenuInflater().inflate(R.menu.menu_main, menu);
+
+        if(BuildConfig.DEBUG) {
+            MenuItem generate = menu.findItem(R.id.mainmenu_generate_data);
+            generate.setVisible(true);
+        }
         return true;
     }
 
@@ -111,6 +118,7 @@ public class MainActivity extends AppCompatActivity implements
             case R.id.mainmenu_generate_data:
                 // this is a functionality only available in debug mode.
                 // it generates some dummy test data.
+                TestData.generateTestData(getContentResolver());
                 break;
             default:
                 return super.onOptionsItemSelected(item);
